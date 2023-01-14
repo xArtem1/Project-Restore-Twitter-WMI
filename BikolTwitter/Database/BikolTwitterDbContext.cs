@@ -22,6 +22,9 @@ public class BikolTwitterDbContext : DbContext
 
             e.HasIndex(e => e.Username)
              .IsUnique();
+
+            e.Property(e => e.ProfitSum)
+             .HasColumnType("decimal(10,2)");
         });
     }
 }
