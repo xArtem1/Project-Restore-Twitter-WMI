@@ -2,6 +2,7 @@
 using BikolTwitter.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BikolTwitter.Migrations
 {
     [DbContext(typeof(BikolTwitterDbContext))]
-    partial class BikolTwitterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230114163652_ChangeBikolSubIdTypeToInt")]
+    partial class ChangeBikolSubIdTypeToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");

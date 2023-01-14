@@ -31,7 +31,7 @@ public class BikolSubsController : ControllerBase
 	}
 
 	[HttpDelete("{id}")]
-	public async Task<ActionResult> Delete([FromRoute] Guid id)
+	public async Task<ActionResult> Delete([FromRoute] int id)
 	{
 		await _service.DeleteAsync(id);
 		return NoContent();

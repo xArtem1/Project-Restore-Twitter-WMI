@@ -51,7 +51,7 @@ public class BikolSubsControllerTests : IClassFixture<WebApplicationFactory<Prog
 	[Fact]
 	public async Task Delete_ForNonexistingBikolSub_ShouldReturnNotFoundStatusCode()
 	{
-		var response = await _defaultClient.DeleteAsync($"api/bikolsubs/{Guid.NewGuid()}");
+		var response = await _defaultClient.DeleteAsync("api/bikolsubs/0");
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 

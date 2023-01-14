@@ -31,7 +31,7 @@ public class BikolSubService : IBikolSubService
         return _mapper.Map<IEnumerable<BikolSubDto>>(allBikolSubs);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(int id)
     {
         var bikolSub = await _dbContext.BikolSubs.FirstOrDefaultAsync(s => s.Id == id);
 
