@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BikolTwitter", "BikolTwitter\BikolTwitter.csproj", "{A1C178C9-B5C4-4B4D-85B5-88845A9C70E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BikolTwitter.Tests", "BikolTwitter.Tests\BikolTwitter.Tests.csproj", "{8E5CE6AA-95D3-4324-8530-FD27E008BC5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1C178C9-B5C4-4B4D-85B5-88845A9C70E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1C178C9-B5C4-4B4D-85B5-88845A9C70E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1C178C9-B5C4-4B4D-85B5-88845A9C70E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1C178C9-B5C4-4B4D-85B5-88845A9C70E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E5CE6AA-95D3-4324-8530-FD27E008BC5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E5CE6AA-95D3-4324-8530-FD27E008BC5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E5CE6AA-95D3-4324-8530-FD27E008BC5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E5CE6AA-95D3-4324-8530-FD27E008BC5E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03B62EB3-AD9A-4EED-9EC9-F5FAB0B67DDA}
+	EndGlobalSection
+EndGlobal
