@@ -1,1 +1,1 @@
-﻿public record CreateBikolSubDto(string TwitterUsername);
+﻿public record CreateBikolSubDto(string Username);

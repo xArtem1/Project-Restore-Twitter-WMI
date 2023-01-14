@@ -17,8 +17,11 @@ public class BikolTwitterDbContext : DbContext
     {
         modelBuilder.Entity<BikolSub>(e =>
         {
-            e.Property(bs => bs.TwitterUsername)
+            e.Property(bs => bs.Username)
              .IsRequired();
+
+            e.HasIndex(e => e.Username)
+             .IsUnique();
         });
     }
 }

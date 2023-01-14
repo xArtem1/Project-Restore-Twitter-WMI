@@ -59,7 +59,7 @@ public class BikolSubsControllerTests : IClassFixture<WebApplicationFactory<Prog
 	public async Task Delete_ForExistingBikolSub_ShouldReturNoContentStatusCode()
 	{
 		var dbContext = _factory.Services.CreateScope().ServiceProvider.GetService<BikolTwitterDbContext>();
-		var testBikolSub = new BikolSub { TwitterUsername = "@test" };
+		var testBikolSub = new BikolSub { Username = "@test" };
 		dbContext.BikolSubs.Add(testBikolSub);
 		dbContext.SaveChanges();
         var response = await _defaultClient.DeleteAsync($"api/bikolsubs/{testBikolSub.Id}");

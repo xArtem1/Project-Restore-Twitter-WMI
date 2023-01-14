@@ -33,6 +33,6 @@ public class CreateBikolSubDtoValidatorTests
 	{
         var model = new CreateBikolSubDto(userName);
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(m => m.TwitterUsername);
+        result.ShouldHaveValidationErrorFor(m => m.Username);
     }
 }
