@@ -1,4 +1,5 @@
 ﻿using BikolTwitter.Database;
+using BikolTwitter.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -46,4 +47,22 @@ public class BikolSubsControllerTests : IClassFixture<WebApplicationFactory<Prog
 		var response = await _defaultClient.GetAsync("api/bikolsubs");
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
 	}
+
+	[Fact]
+	public async Task Delete_ForNonexistingBikolSub_ShouldReturnNotFoundStatusCode()
+	{
+		var response = await _defaultClient.DeleteAsync($"api/bikolsubs/{Guid.NewGuid()}");
+		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+	}
+
+	[Fact]
+	public async Task Delete_ForExistingBikolSub_ShouldReturNoContentStatusCode()
+	{
+		var dbContext = _factory.Services.CreateScope().ServiceProvider.GetService<BikolTwitterDbContext>();
+		var testBikolSub = new BikolSub { TwitterUsername = "@test" };
+		dbContext.BikolSubs.Add(testBikolSub);
+		dbContext.SaveChanges();
+        var response = await _defaultClient.DeleteAsync($"api/bikolsubs/{testBikolSub.Id}");
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
 }

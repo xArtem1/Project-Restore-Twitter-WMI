@@ -1,4 +1,5 @@
 using BikolTwitter.Database;
+using BikolTwitter.Middleware;
 using BikolTwitter.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -25,7 +26,8 @@ builder
 .AddScoped<IBikolSubService, BikolSubService>()
 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
 .AddFluentValidationAutoValidation()
-.AddAutoMapper(Assembly.GetExecutingAssembly());
+.AddAutoMapper(Assembly.GetExecutingAssembly())
+.AddScoped<ErrorHandlingMiddleware>();
                
 
 var app = builder.Build();
@@ -44,6 +46,9 @@ if (dbContext!.Database.IsRelational() && dbContext.Database.GetPendingMigration
 {
     dbContext.Database.Migrate();
 }
+
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
