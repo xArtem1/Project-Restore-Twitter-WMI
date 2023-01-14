@@ -1,17 +1,13 @@
-﻿using BikolTwitter.Database;
-using BikolTwitter.Entities;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
-
-namespace BikolTwitter.Tests;
+﻿namespace BikolTwitter.Tests;
 
 public class BikolSubsControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
 	private readonly WebApplicationFactory<Program> _factory;
 	private readonly HttpClient _defaultClient;
+    private readonly ITestOutputHelper _testOutputHelper;
 
-    public BikolSubsControllerTests(WebApplicationFactory<Program> factory)
+    public BikolSubsControllerTests(WebApplicationFactory<Program> factory,
+		ITestOutputHelper testOutputHelper)
 	{
 		_factory = factory.WithWebHostBuilder(builder =>
 		{
@@ -19,17 +15,21 @@ public class BikolSubsControllerTests : IClassFixture<WebApplicationFactory<Prog
 			{
 				var dbContextService = services.First(s => s.ServiceType == typeof(BikolTwitterDbContext));
 				services.Remove(dbContextService);
-				services.AddDbContext<BikolTwitterDbContext>(options => options.UseInMemoryDatabase("BikolTwitterDb"));
+				var optionsBuilder = new DbContextOptionsBuilder();
+				optionsBuilder.UseInMemoryDatabase("BikolTwitterDb");
+				services.AddSingleton(new BikolTwitterDbContext(optionsBuilder.Options));
 			});
 		});
 		_defaultClient = _factory.CreateClient();
+		_testOutputHelper = testOutputHelper;
 	}
 
 	[Fact]
 	public async Task Create_ForValidData_ShouldReturnCreatedStatusCode()
 	{
-		var model = new CreateBikolSubDto("@elonmusk");
+		var model = new CreateBikolSubDto("@unique");
 		var response = await _defaultClient.PostAsJsonAsync("api/bikolsubs", model);
+		_testOutputHelper.WriteLine(await response.Content.ReadAsStringAsync());
 		response.StatusCode.Should().Be(HttpStatusCode.Created);
 	}
 
