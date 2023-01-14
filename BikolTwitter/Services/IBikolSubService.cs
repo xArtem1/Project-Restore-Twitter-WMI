@@ -3,4 +3,5 @@
 public interface IBikolSubService
 {
     Task<BikolSubDto> CreateAsync(CreateBikolSubDto dto);
+    Task<IEnumerable<BikolSubDto>> GetAllAsync();
 }

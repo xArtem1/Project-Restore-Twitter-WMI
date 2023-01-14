@@ -22,4 +22,11 @@ public class BikolSubsController : ControllerBase
 		var bikolSub = await _service.CreateAsync(dto);
 		return Created($"api/bikolsubs/{bikolSub.Id}", bikolSub);
 	}
+
+	[HttpGet]
+	public async Task<ActionResult<IEnumerable<BikolSubDto>>> GetAll()
+	{
+		var bikolSubs = await _service.GetAllAsync();
+		return Ok(bikolSubs);
+	}
 }

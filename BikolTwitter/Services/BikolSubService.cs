@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BikolTwitter.Database;
 using BikolTwitter.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BikolTwitter.Services;
 
@@ -21,5 +22,11 @@ public class BikolSubService : IBikolSubService
         await _dbContext.BikolSubs.AddAsync(bikolSub);
         await _dbContext.SaveChangesAsync();
         return _mapper.Map<BikolSubDto>(bikolSub);
+    }
+
+    public async Task<IEnumerable<BikolSubDto>> GetAllAsync()
+    {
+        var allBikolSubs = await _dbContext.BikolSubs.ToListAsync();
+        return _mapper.Map<IEnumerable<BikolSubDto>>(allBikolSubs);
     }
 }

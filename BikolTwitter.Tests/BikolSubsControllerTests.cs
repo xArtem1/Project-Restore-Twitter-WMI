@@ -39,4 +39,11 @@ public class BikolSubsControllerTests : IClassFixture<WebApplicationFactory<Prog
         var response = await _defaultClient.PostAsJsonAsync("api/bikolsubs", model);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+	[Fact]
+	public async Task GetAll_ShouldReturnOkStatuCode()
+	{
+		var response = await _defaultClient.GetAsync("api/bikolsubs");
+		response.StatusCode.Should().Be(HttpStatusCode.OK);
+	}
 }
