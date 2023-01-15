@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using System.Reflection;
+using Tweetinvi;
+using Tweetinvi.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +23,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
 #if DEBUG
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, "XMLDocumentation.xml");
-    c.IncludeXmlComments(xmlPath);
+    if (!UnitTestDetector.IsRunningFromXUnit)
+    {
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, "XMLDocumentation.xml");
+        c.IncludeXmlComments(xmlPath); 
+    }
 #endif
 });
 var connString = builder.Configuration.GetConnectionString("DBConnection");
@@ -33,7 +38,10 @@ builder
 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
 .AddFluentValidationAutoValidation()
 .AddAutoMapper(Assembly.GetExecutingAssembly())
-.AddScoped<ErrorHandlingMiddleware>();
+.AddScoped<ErrorHandlingMiddleware>()
+.AddScoped<ITweetService, TweetService>();
+//.AddScoped<ITimelinesClient, TimelinesClient>()
+//.AddScoped<ITwitterClient, TwitterClient>();
                
 
 var app = builder.Build();
