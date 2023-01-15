@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using System.Reflection;
+using Tweetinvi;
+using Tweetinvi.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,10 @@ builder
 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
 .AddFluentValidationAutoValidation()
 .AddAutoMapper(Assembly.GetExecutingAssembly())
-.AddScoped<ErrorHandlingMiddleware>();
+.AddScoped<ErrorHandlingMiddleware>()
+.AddScoped<ITweetService, TweetService>();
+//.AddScoped<ITimelinesClient, TimelinesClient>()
+//.AddScoped<ITwitterClient, TwitterClient>();
                
 
 var app = builder.Build();
