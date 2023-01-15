@@ -23,8 +23,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
 #if DEBUG
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, "XMLDocumentation.xml");
-    c.IncludeXmlComments(xmlPath);
+    if (!UnitTestDetector.IsRunningFromXUnit)
+    {
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, "XMLDocumentation.xml");
+        c.IncludeXmlComments(xmlPath); 
+    }
 #endif
 });
 var connString = builder.Configuration.GetConnectionString("DBConnection");
