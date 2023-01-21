@@ -11,5 +11,6 @@ public record TweetDto
     public string Prefix { get; set; }
     public string Suffix { get; set; }
     public int FavoriteCount { get; set; }
-    public string CreatedBy { get; set; }   
+    public string CreatedBy { get; set; }
+    public string CreatedByScreenName { get; set; }
 }

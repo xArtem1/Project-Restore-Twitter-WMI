@@ -98,7 +98,8 @@ namespace BikolTwitter.Background
                     Prefix = t.Prefix,
                     Suffix = t.Suffix,
                     FavoriteCount = t.FavoriteCount,
-                    CreatedBy = t.CreatedBy.Name
+                    CreatedBy = t.CreatedBy.Name,
+                    CreatedByScreenName = t.CreatedBy.ScreenName
                 });
             }
             catch (Exception e)
