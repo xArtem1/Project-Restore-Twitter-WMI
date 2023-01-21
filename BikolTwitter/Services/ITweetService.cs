@@ -4,5 +4,5 @@ namespace BikolTwitter.Services;
 
 public interface ITweetService
 {
-    Task<IEnumerable<TweetDto>> GetAllTweetsAsync();
+    Task<IEnumerable<TweetDto>> GetAllTweetsAsync(DateTimeOffset from);
 }

@@ -1,10 +1,8 @@
-﻿namespace BikolTwitter.Dtos;
+﻿namespace BikolTwitter.Entities;
 
-/// <summary>
-/// Class reprezenting data about tweet, which are returned to clinent.
-/// </summary>
-public record TweetDto
+public class BikolSubTweet
 {
+    public int Id { get; set; }
     public DateTimeOffset CreatedAt { get; init; }
     public string Text { get; set; }
     public string FullText { get; set; }
