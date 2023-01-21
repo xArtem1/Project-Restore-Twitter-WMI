@@ -1,3 +1,4 @@
+using BikolTwitter.Credentials;
 using BikolTwitter.Database;
 using BikolTwitter.Middleware;
 using BikolTwitter.Services;
@@ -40,9 +41,14 @@ builder
 .AddAutoMapper(Assembly.GetExecutingAssembly())
 .AddScoped<ErrorHandlingMiddleware>()
 .AddScoped<ITweetService, TweetService>();
-//.AddScoped<ITimelinesClient, TimelinesClient>()
-//.AddScoped<ITwitterClient, TwitterClient>();
-               
+
+var twitterAPICredentials = new TwitterAPICredentials();
+builder.Configuration.GetSection("TwitterAPICredentials").Bind(twitterAPICredentials);
+builder.Services.AddScoped<ITimelinesClient>(_ => new TimelinesClient(
+    new TwitterClient(
+        twitterAPICredentials.Key,
+        twitterAPICredentials.KeySecret,
+        twitterAPICredentials.BearerToken)));
 
 var app = builder.Build();
 
