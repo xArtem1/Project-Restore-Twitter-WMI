@@ -42,7 +42,7 @@ namespace BikolTwitter.Migrations
                     b.HasIndex("TwitterId")
                         .IsUnique();
 
-                    b.ToTable("BikolPosts");
+                    b.ToTable("BikolPosts", (string)null);
                 });
 
             modelBuilder.Entity("BikolTwitter.Entities.BikolSub", b =>
@@ -63,7 +63,7 @@ namespace BikolTwitter.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.ToTable("BikolSubs");
+                    b.ToTable("BikolSubs", (string)null);
                 });
 
             modelBuilder.Entity("BikolTwitter.Entities.BikolSubTweet", b =>
@@ -95,7 +95,7 @@ namespace BikolTwitter.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BikolSubTweets");
+                    b.ToTable("BikolSubTweets", (string)null);
                 });
 
             modelBuilder.Entity("BikolTwitter.Entities.BikolPost", b =>

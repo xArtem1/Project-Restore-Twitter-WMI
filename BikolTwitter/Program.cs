@@ -1,3 +1,4 @@
+using BikolTwitter.Background;
 using BikolTwitter.Credentials;
 using BikolTwitter.Database;
 using BikolTwitter.Middleware;
@@ -40,7 +41,8 @@ builder
 .AddFluentValidationAutoValidation()
 .AddAutoMapper(Assembly.GetExecutingAssembly())
 .AddScoped<ErrorHandlingMiddleware>()
-.AddScoped<ITweetService, TweetService>();
+.AddScoped<ITweetService, TweetService>()
+.AddScoped<TwitterAPIBackgroundReader>();
 
 var twitterAPICredentials = new TwitterAPICredentials();
 builder.Configuration.GetSection("TwitterAPICredentials").Bind(twitterAPICredentials);
@@ -66,6 +68,9 @@ if (dbContext!.Database.IsRelational() && dbContext.Database.GetPendingMigration
 {
     dbContext.Database.Migrate();
 }
+
+var tweetsBackgroundService = app.Services.CreateScope().ServiceProvider.GetRequiredService<TwitterAPIBackgroundReader>();
+tweetsBackgroundService.Start();
 
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
