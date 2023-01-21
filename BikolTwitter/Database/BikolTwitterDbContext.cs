@@ -14,6 +14,10 @@ public class BikolTwitterDbContext : DbContext
     /// Reptresents BikolPosts table in database.
     /// </summary>
     public DbSet<BikolPost> BikolPosts { get; set; }
+    /// <summary>
+    /// Represents BikolSubTweets table in database
+    /// </summary>
+    public DbSet<BikolSubTweet> BikolSubTweets { get; set; }
 
     /// <inheritdoc/>
     public BikolTwitterDbContext(DbContextOptions options)
