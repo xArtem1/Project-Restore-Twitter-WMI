@@ -16,9 +16,9 @@ namespace BikolTwitter.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> GetAll()
+        public async Task<ActionResult<string>> GetAll([FromQuery]DateTimeOffset from)
         {
-            var tweets = await _service.GetAllTweetsAsync();
+            var tweets = await _service.GetAllTweetsAsync(from);
             return Ok(tweets);
         }
     }
