@@ -11,6 +11,7 @@ namespace BikolTwitter.Background
     public class TwitterAPIBackgroundReader
     {
         private bool _isRunning;
+        private bool _currentlyGetting = false;
 
         private readonly ITimelinesClient _timelinesClient;
         private readonly BikolTwitterDbContext _dbContext;
@@ -29,6 +30,11 @@ namespace BikolTwitter.Background
 
         private async Task GetNewTweetsAsync()
         {
+            if (CheckCurrentlyGetting())
+            {
+                return;
+            }
+
             try
             {
                 var bikolSubs = await _dbContext.BikolSubs.ToListAsync();
@@ -38,7 +44,7 @@ namespace BikolTwitter.Background
                 {
                     latestTweet = DateTimeOffset.UtcNow.AddHours(-24);
                 }
-                var newTweets = new List<object>();
+                var newTweets = new List<BikolSubTweet>();
                 foreach (var bikolSub in bikolSubs)
                 {
                     var tweets = await GetBikolSubTweetsAsync(bikolSub.Username, latestTweet);
@@ -50,13 +56,31 @@ namespace BikolTwitter.Background
                     return;
                 }
 
-                var tweetsEntities = _mapper.Map<IEnumerable<BikolSubTweet>>(newTweets).ToList();
-                await _dbContext.BikolSubTweets.AddRangeAsync(tweetsEntities);
+                await _dbContext.BikolSubTweets.AddRangeAsync(newTweets);
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
                 _logger.LogError("Getting new tweets from Twitter API falied, exception caught.", e);
+            }
+            finally
+            {
+                _currentlyGetting = false;
+            }
+        }
+
+        private readonly object _currentlyGettingLockObj = new object();
+        private bool CheckCurrentlyGetting()
+        {
+            lock (_currentlyGettingLockObj)
+            {
+                if (_currentlyGetting)
+                {
+                    return true;
+                }
+
+                _currentlyGetting = true;
+                return false;
             }
         }
 
@@ -65,8 +89,17 @@ namespace BikolTwitter.Background
             try
             {
                 var tweets = (await _timelinesClient.GetUserTimelineAsync(username))
-                             .Where(t => t.CreatedAt > lastTweetDate);
-                return _mapper.Map<IEnumerable<BikolSubTweet>>(tweets);
+                             .Where(t => t.CreatedAt > lastTweetDate).ToList();
+                return tweets.Select(t => new BikolSubTweet
+                {
+                    CreatedAt = t.CreatedAt,
+                    Text = t.Text,
+                    FullText = t.FullText,
+                    Prefix = t.Prefix,
+                    Suffix = t.Suffix,
+                    FavoriteCount = t.FavoriteCount,
+                    CreatedBy = t.CreatedBy.Name
+                });
             }
             catch (Exception e)
             {
@@ -93,6 +126,7 @@ namespace BikolTwitter.Background
         public void Stop()
         {
             _isRunning = false;
+            _currentlyGetting = false;
         }
     }
 }
