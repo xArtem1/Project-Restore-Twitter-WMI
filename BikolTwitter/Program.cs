@@ -42,7 +42,16 @@ builder
 .AddAutoMapper(Assembly.GetExecutingAssembly())
 .AddScoped<ErrorHandlingMiddleware>()
 .AddScoped<ITweetService, TweetService>()
-.AddScoped<TwitterAPIBackgroundReader>();
+.AddScoped<TwitterAPIBackgroundReader>()
+.AddCors(options =>
+{
+    options.AddPolicy("FrontendClient", builder =>
+    {
+        builder.AllowAnyMethod()
+        .AllowAnyHeader()
+        .WithOrigins("https://twitter.com");
+    });
+});
 
 var twitterAPICredentials = new TwitterAPICredentials();
 builder.Configuration.GetSection("TwitterAPICredentials").Bind(twitterAPICredentials);
@@ -73,9 +82,17 @@ var tweetsBackgroundService = app.Services.CreateScope().ServiceProvider.GetRequ
 tweetsBackgroundService.Start();
 
 
+
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseHttpsRedirection();
+
+app.UseCors("FrontendClient");
 
 app.UseAuthorization();
 

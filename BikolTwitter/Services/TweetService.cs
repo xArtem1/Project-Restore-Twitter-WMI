@@ -27,6 +27,7 @@ public class TweetService : ITweetService
                            .BikolSubTweets
                            .ToListAsync())
                            .Where(t => t.CreatedAt > from)
+                           .OrderByDescending(t => t.CreatedAt)
                            .Take(100);
         return _mapper.Map<IEnumerable<TweetDto>>(tweets);
     }
