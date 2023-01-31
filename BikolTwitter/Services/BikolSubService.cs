@@ -41,6 +41,7 @@ public class BikolSubService : IBikolSubService
         }
 
         _dbContext.BikolSubs.Remove(bikolSub);
+        _dbContext.RemoveRange(await _dbContext.BikolSubTweets.Where(t => t.CreatedByScreenName == bikolSub.Username).ToListAsync());
         await _dbContext.SaveChangesAsync();
     }
 }
