@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using Tweetinvi.Client;
+using Tweetinvi.Models;
 
 namespace BikolTwitter.Background
 {
@@ -39,24 +40,41 @@ namespace BikolTwitter.Background
             {
                 var bikolSubs = await _dbContext.BikolSubs.ToListAsync();
                 var currentTweets = await _dbContext.BikolSubTweets.ToListAsync();
-                var latestTweet = currentTweets.Any() ? currentTweets.Max(t => t.CreatedAt) : default;
-                if (latestTweet < DateTimeOffset.UtcNow.AddHours(-24))
+                var lockObj = new object();
+                var newTweets = new List<ITweet>();
+                void AddTweets(IEnumerable<ITweet> tweets)
                 {
-                    latestTweet = DateTimeOffset.UtcNow.AddHours(-24);
-                }
-                var newTweets = new List<BikolSubTweet>();
-                foreach (var bikolSub in bikolSubs)
-                {
-                    var tweets = await GetBikolSubTweetsAsync(bikolSub.Username, latestTweet);
-                    newTweets.AddRange(tweets);
+                    lock (lockObj)
+                    {
+                        newTweets.AddRange(tweets);
+                    }
                 }
 
-                if (!newTweets.Any())
+                await Task.WhenAll(bikolSubs.Select(async s =>
                 {
-                    return;
-                }
+                    try
+                    {
+                        var allTweets = await _timelinesClient.GetUserTimelineAsync(s.Username);
+                        AddTweets(allTweets.Where(t => t.CreatedAt >= DateTimeOffset.UtcNow.AddHours(-24)));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($"Couldn't load tweets of bikolsub {s.Username}.", e);
+                    }
+                }));
 
-                await _dbContext.BikolSubTweets.AddRangeAsync(newTweets);
+                _dbContext.BikolSubTweets.RemoveRange(await _dbContext.BikolSubTweets.ToListAsync());
+                await _dbContext.BikolSubTweets.AddRangeAsync(newTweets.Where(t => t.FullText.Length > 10).Select(t => new BikolSubTweet
+                {
+                    CreatedAt = t.CreatedAt,
+                    Text = t.Text,
+                    FullText = t.FullText,
+                    Prefix = t.Prefix,
+                    Suffix = t.Suffix,
+                    FavoriteCount = t.FavoriteCount,
+                    CreatedBy = t.CreatedBy.Name,
+                    CreatedByScreenName = t.CreatedBy.ScreenName
+                }));
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception e)
@@ -84,31 +102,6 @@ namespace BikolTwitter.Background
             }
         }
 
-        private async Task<IEnumerable<BikolSubTweet>> GetBikolSubTweetsAsync(string username, DateTimeOffset lastTweetDate)
-        {
-            try
-            {
-                var tweets = (await _timelinesClient.GetUserTimelineAsync(username))
-                             .Where(t => t.CreatedAt > lastTweetDate).ToList();
-                return tweets.Select(t => new BikolSubTweet
-                {
-                    CreatedAt = t.CreatedAt,
-                    Text = t.Text,
-                    FullText = t.FullText,
-                    Prefix = t.Prefix,
-                    Suffix = t.Suffix,
-                    FavoriteCount = t.FavoriteCount,
-                    CreatedBy = t.CreatedBy.Name,
-                    CreatedByScreenName = t.CreatedBy.ScreenName
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"Exception caught when trying to get {username} tweets.", e);
-                return Enumerable.Empty<BikolSubTweet>();
-            }
-        }
-
         public async void Start()
         {
             if (_isRunning)
@@ -120,7 +113,7 @@ namespace BikolTwitter.Background
             while (_isRunning)
             {
                 await GetNewTweetsAsync();
-                await Task.Delay(TimeSpan.FromMinutes(1));
+                await Task.Delay(TimeSpan.FromSeconds(30));
             }
         }
 
